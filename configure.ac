@@ -1,3 +1,9 @@
+#
+# Based off of Martin Mann's excellent Autotools tutorial
+#
+# cf. http://www.bioinf.uni-freiburg.de/~mmann/HowTo/automake.html
+#
+
 # initial information about the project
 AC_INIT([m2s],[1.0],[alexpreynolds@gmail.com])
 
