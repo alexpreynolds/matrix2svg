@@ -1,4 +1,4 @@
 matrix2svg
 ==========
 
-Converts text-formatted matrix to a vector-based SVG figure
+Converts a text-formatted matrix to a vector-based SVG figure
