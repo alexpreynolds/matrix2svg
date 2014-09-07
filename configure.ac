@@ -5,7 +5,7 @@
 #
 
 # initial information about the project
-AC_INIT([m2s],[1.0],[alexpreynolds@gmail.com])
+AC_INIT([m2s],[0.1a],[alexpreynolds@gmail.com])
 
 # check if the source folder is correct
 AC_CONFIG_SRCDIR([src/bin/matrix2svg.c])

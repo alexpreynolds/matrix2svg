@@ -1,1 +1,26 @@
-/usr/share/automake-1.11/INSTALL
+Installation Instructions
+*************************
+
+Copyright (C) 2014 Alex Reynolds
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.  This file is offered as-is,
+without warranty of any kind.
+
+Basic Installation
+==================
+
+Briefly, the shell commands `./configure; make; make install' should
+configure, build, and install this package. If there is no ./configure
+script, use the following commands to populate the package with the 
+required Makefile and dependent configuration files:
+
+$ aclocal
+$ autoheader
+$ automake --force-missing --add-missing
+$ autoconf
+
+When running ./configure, if you would like to build the debug version,
+add the "--enable-debug" option. This adds the requisite debug flags and 
+optimization level settings to build statements.

@@ -5,6 +5,8 @@ AM_CFLAGS = -I$(top_srcdir)/include @AM_CFLAGS@
 # THE LIBRARIES TO BUILD
 ###############################################################################
 
+include_HEADERS = matrix2svg_types.h
+
 # the library names to build (note we are building static libs only)
 lib_LIBRARIES = libm2s.a
 
@@ -21,4 +23,11 @@ libm2s_a_SOURCES =	\
 			$(libm2s_a_HEADERS) \
 			matrix2svg_print.c \
 			matrix2svg_types.c  
+
+CLEANFILES = $(top_srcdir)/include/matrix2svg_types.h
+EXTRA_DIST = matrix2svg_types.h.in
+HDR = $(top_srcdir)/include/matrix2svg_types.h.in
+BUILT_SOURCES = matrix2svg_types.h
+matrix2svg_types.h: ${HDR}
+	sed -e "s/X.YY/$$(echo @VERSION@)/" < ${HDR} > $(top_srcdir)/include/$@
 ###############################################################################

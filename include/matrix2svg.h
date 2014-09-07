@@ -1,5 +1,5 @@
-#ifndef M2S_H
-#define M2S_H
+#ifndef _M2S_H
+#define _M2S_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,10 +12,12 @@
 #include "matrix2svg_types.h"
 #include "matrix2svg_print.h"
 
-#define M2S_VERSION "1.0"
-
 #define MAX_LINE_LENGTH 1048560
 #define MAX_CELL_LENGTH 65535
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern const char *m2s_name;
 extern const char *m2s_version;
@@ -53,4 +55,8 @@ void initialize_globals();
 void parse_command_line_options(int argc, char **argv);
 void print_usage(FILE *stream);
 
+#ifdef __cplusplus
+};
 #endif
+
+#endif /* _M2S_H */
