@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define MAX_LINE_LENGTH 1048560
+#define MAX_CELL_LENGTH 65535
 #define M2S_VERSION "X.YY" /* implementation */
 
 #ifdef __cplusplus
