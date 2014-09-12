@@ -3,49 +3,69 @@
 
 #include <stdint.h>
 
-#define MAX_LINE_LENGTH 1048560
-#define MAX_CELL_LENGTH 65535
+#define M2S_MAX_LINE_LENGTH 1048560
+#define M2S_MAX_CELL_LENGTH 65535
 #define M2S_VERSION "X.YY" /* implementation */
+
+#define M2S_FOREACH_OPERATION(M2S_OPERATION)			\
+    M2S_OPERATION(no_op)					\
+    M2S_OPERATION(winsorize_rows_op)				\
+    M2S_OPERATION(winsorize_cols_op)				\
+    M2S_OPERATION(trim_cols_op)					\
+    M2S_OPERATION(trim_rows_op)					\
+    
+#define M2S_GENERATE_ENUM(ENUM) ENUM,
+#define M2S_GENERATE_STRING(STRING) #STRING,
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef int boolean;
-extern const boolean kTrue;
-extern const boolean kFalse;
+    enum M2S_OPERATION_ENUM {
+	M2S_FOREACH_OPERATION(M2S_GENERATE_ENUM)
+    };
+    
+    static const char *M2S_OPERATION_STRING[] = {
+	M2S_FOREACH_OPERATION(M2S_GENERATE_STRING)
+    };
 
-typedef double m2s_data_t;
-typedef struct m2s_matrix_t m2s_matrix_t;
-typedef struct m2s_stats_t m2s_stats_t;
-typedef struct m2s_color_t m2s_color_t;
+    extern int m2s_operations[sizeof(M2S_OPERATION_STRING)/sizeof(*M2S_OPERATION_STRING)];
+    
+    typedef int boolean;
+    extern const boolean kTrue;
+    extern const boolean kFalse;
 
-struct m2s_matrix_t {
-    uint32_t      row_count;
-    uint32_t      col_count;
-    char        **col_labels;
-    char        **row_labels;
-    m2s_data_t   *data_values;
-    boolean      *missing_values;
-    m2s_stats_t  *row_stats;
-    m2s_stats_t  *col_stats;
-    m2s_color_t  *color_values;
-};
-
-struct m2s_stats_t {
-    double *means;
-    double *svars;
-    double *stdevs;
-    double *mins;
-    double *maxs;
-};
-
-struct m2s_color_t {
-    short r;
-    short g;
-    short b;
-    float a;
-};
+    typedef double m2s_data_t;
+    typedef struct m2s_matrix_t m2s_matrix_t;
+    typedef struct m2s_stats_t m2s_stats_t;
+    typedef struct m2s_color_t m2s_color_t;
+    
+    struct m2s_matrix_t {
+	uint32_t      row_count;
+	uint32_t      col_count;
+	char        **col_labels;
+	char        **row_labels;
+	m2s_data_t   *data_values;
+	boolean      *missing_values;
+	m2s_stats_t  *row_stats;
+	m2s_stats_t  *col_stats;
+	m2s_color_t  *color_values;
+    };
+    
+    struct m2s_stats_t {
+	double *means;
+	double *svars;
+	double *stdevs;
+	double *mins;
+	double *maxs;
+    };
+    
+    struct m2s_color_t {
+	short r;
+	short g;
+	short b;
+	float a;
+    };
 
 #ifdef __cplusplus
 };

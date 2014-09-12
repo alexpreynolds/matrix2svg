@@ -1,4 +1,23 @@
 #include "matrix2svg_print.h"
+#include "matrix2svg.h"
+
+void print_ops()
+{
+#ifdef DEBUG
+    fprintf(stderr, "Debug: Entering --> print_ops()\n");
+#endif
+
+    int idx;
+    int m2s_operations_count = sizeof(m2s_operations) / sizeof(*m2s_operations);
+
+    for (idx = 0; idx < m2s_operations_count; ++idx) {
+	fprintf(stderr, "[%d] %s\n", m2s_operations[idx], M2S_OPERATION_STRING[m2s_operations[idx]]);
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "Debug: Leaving  --> print_ops()\n");
+#endif
+}
 
 void print_rows(FILE *stream, const m2s_matrix_t *mtx_ptr)
 {

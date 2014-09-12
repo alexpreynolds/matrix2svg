@@ -7,15 +7,15 @@ void read_in_data(FILE *in_file_ptr, m2s_matrix_t **mtx_ptr)
     fprintf(stderr, "Debug: Entering --> read_in_data()\n");
 #endif
 
-    char in_line[MAX_LINE_LENGTH + 1];
+    char in_line[M2S_MAX_LINE_LENGTH + 1];
     char *tok = NULL;
     uint32_t line_idx = 0U;
     int32_t col_idx = -1;
 
-    in_line[MAX_LINE_LENGTH] = '1';
+    in_line[M2S_MAX_LINE_LENGTH] = '1';
 
     /* read in column labels */
-    fgets(in_line, MAX_LINE_LENGTH + 1, in_file_ptr);
+    fgets(in_line, M2S_MAX_LINE_LENGTH + 1, in_file_ptr);
     tok = strtok_single(in_line, "\t\n");
     do {
         if (col_idx >= 0) {
@@ -27,7 +27,7 @@ void read_in_data(FILE *in_file_ptr, m2s_matrix_t **mtx_ptr)
     } while (tok);
 
     /* read in row labels and cell values */
-    while (fgets(in_line, MAX_LINE_LENGTH + 1, in_file_ptr)) {
+    while (fgets(in_line, M2S_MAX_LINE_LENGTH + 1, in_file_ptr)) {
         col_idx = -1;
         tok = strtok_single(in_line, "\t\n");
         add_mtx_row_label(mtx_ptr, tok);

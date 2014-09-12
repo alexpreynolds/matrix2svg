@@ -18,7 +18,7 @@ required Makefile and dependent configuration files:
 
 $ aclocal
 $ autoheader
-$ automake --force-missing --add-missing
+$ automake --add-missing
 $ autoconf
 
 When running ./configure, if you would like to build the debug version,
