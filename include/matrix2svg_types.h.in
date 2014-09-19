@@ -5,6 +5,7 @@
 
 #define M2S_MAX_LINE_LENGTH 1048560
 #define M2S_MAX_CELL_LENGTH 65535
+#define M2S_DEFAULT_HEAP_VALUE 0.0
 #define M2S_VERSION "X.YY" /* implementation */
 
 #define M2S_FOREACH_OPERATION(M2S_OPERATION)			\
@@ -39,6 +40,7 @@ extern "C" {
     typedef struct m2s_matrix_t m2s_matrix_t;
     typedef struct m2s_stats_t m2s_stats_t;
     typedef struct m2s_color_t m2s_color_t;
+    typedef struct m2s_heap_t m2s_heap_t;
     
     struct m2s_matrix_t {
 	uint32_t      row_count;
@@ -47,6 +49,8 @@ extern "C" {
 	char        **row_labels;
 	m2s_data_t   *data_values;
 	boolean      *missing_values;
+	m2s_heap_t  **row_heaps;
+	m2s_heap_t  **col_heaps;
 	m2s_stats_t  *row_stats;
 	m2s_stats_t  *col_stats;
 	m2s_color_t  *color_values;
@@ -65,6 +69,12 @@ extern "C" {
 	short g;
 	short b;
 	float a;
+    };
+
+    struct m2s_heap_t {
+	m2s_data_t  *data_values;
+	uint32_t     capacity;
+	uint32_t     size;
     };
 
 #ifdef __cplusplus

@@ -1,5 +1,6 @@
 #include "matrix2svg_data.h"
 #include "matrix2svg_types.h"
+#include "matrix2svg_heap.h"
 
 void read_in_data(FILE *in_file_ptr, m2s_matrix_t **mtx_ptr)
 {
@@ -9,6 +10,7 @@ void read_in_data(FILE *in_file_ptr, m2s_matrix_t **mtx_ptr)
 
     char in_line[M2S_MAX_LINE_LENGTH + 1];
     char *tok = NULL;
+    uint32_t row_idx = 0U;
     uint32_t line_idx = 0U;
     int32_t col_idx = -1;
 
@@ -42,6 +44,38 @@ void read_in_data(FILE *in_file_ptr, m2s_matrix_t **mtx_ptr)
             col_idx++;
         } while(tok);
         line_idx++;
+    }
+
+    /* build row heap structures */
+    if (!(*mtx_ptr)->row_heaps) {
+	(*mtx_ptr)->row_heaps = malloc(sizeof(m2s_heap_t *) * (*mtx_ptr)->row_count);
+	if (!(*mtx_ptr)->row_heaps) {
+	    fprintf(stderr, "Error: matrix pointer's new row heaps pointer is still NULL\n");
+	    exit(EXIT_FAILURE);
+	}
+	for (row_idx = 0; (uint32_t) row_idx < (*mtx_ptr)->row_count; ++row_idx) {
+	    ((*mtx_ptr)->row_heaps)[row_idx] = new_heap((*mtx_ptr)->col_count);
+	}
+    }
+    else {
+	fprintf(stderr, "Error: matrix pointer already has row heaps pointer\n");
+	exit(EXIT_FAILURE);
+    }
+
+    /* build col heap structures */
+    if (!(*mtx_ptr)->col_heaps) {
+	(*mtx_ptr)->col_heaps = malloc(sizeof(m2s_heap_t *) * (*mtx_ptr)->col_count);
+	if (!(*mtx_ptr)->col_heaps) {
+	    fprintf(stderr, "Error: matrix pointer's new column heaps pointer is still NULL\n");
+	    exit(EXIT_FAILURE);
+	}
+	for (col_idx = 0; (uint32_t) col_idx < (*mtx_ptr)->col_count; ++col_idx) {
+	    ((*mtx_ptr)->col_heaps)[col_idx] = new_heap((*mtx_ptr)->row_count);
+	}
+    }
+    else {
+	fprintf(stderr, "Error: matrix pointer already has column heaps pointer\n");
+	exit(EXIT_FAILURE);
     }
 
 #ifdef DEBUG
@@ -144,6 +178,8 @@ m2s_matrix_t * new_mtx_ptr(const uint32_t rows, const uint32_t cols)
     fprintf(stderr, "Debug: Entering --> new_mtx_ptr()\n");
 #endif
 
+    uint32_t heap_idx;
+
     m2s_matrix_t *mtx_ptr = NULL;
     mtx_ptr = malloc(sizeof(m2s_matrix_t));
     if (!mtx_ptr) {
@@ -225,6 +261,40 @@ m2s_matrix_t * new_mtx_ptr(const uint32_t rows, const uint32_t cols)
             fprintf(stderr, "Error: color values pointer is NULL\n");
             exit(EXIT_FAILURE);
         }
+    }
+
+    mtx_ptr->row_heaps = NULL;
+    if ((rows > 0) && (cols > 0)) {
+	mtx_ptr->row_heaps = malloc(rows * sizeof(m2s_heap_t *));
+	if (!mtx_ptr->row_heaps) {
+	    fprintf(stderr, "Error: row heaps pointer is NULL\n");
+	    exit(EXIT_FAILURE);
+	}
+	for (heap_idx = 0; heap_idx < rows; ++heap_idx) {
+	    mtx_ptr->row_heaps[heap_idx] = NULL;
+	    mtx_ptr->row_heaps[heap_idx] = new_heap(cols);
+	    if (!mtx_ptr->row_heaps[heap_idx]) {
+		fprintf(stderr, "Error: row heap pointer at idx [%05d] is NULL\n", heap_idx);
+		exit(EXIT_FAILURE);
+	    }
+	}
+    }
+
+    mtx_ptr->col_heaps = NULL;
+    if ((rows > 0) && (cols > 0)) {
+	mtx_ptr->col_heaps = malloc(cols * sizeof(m2s_heap_t *));
+	if (!mtx_ptr->col_heaps) {
+	    fprintf(stderr, "Error: col heaps pointer is NULL\n");
+	    exit(EXIT_FAILURE);
+	}
+	for (heap_idx = 0; heap_idx < cols; ++heap_idx) {
+	    mtx_ptr->col_heaps[heap_idx] = NULL;
+	    mtx_ptr->col_heaps[heap_idx] = new_heap(rows);
+	    if (!mtx_ptr->col_heaps[heap_idx]) {
+		fprintf(stderr, "Error: col heap pointer at idx [%05d] is NULL\n", heap_idx);
+		exit(EXIT_FAILURE);
+	    }
+	}
     }
 
 #ifdef DEBUG
@@ -685,17 +755,42 @@ void delete_mtx_ptr(m2s_matrix_t **mtx_ptr)
     uint32_t row_idx, col_idx;
 
     for (row_idx = 0; row_idx < (*mtx)->row_count; ++row_idx) {
-        free((*mtx)->row_labels[row_idx]); (*mtx)->row_labels[row_idx] = NULL;
+        free((*mtx)->row_labels[row_idx]); 
+	(*mtx)->row_labels[row_idx] = NULL;
+	if ((*mtx)->row_heaps) {
+	    delete_heap(&((*mtx)->row_heaps)[row_idx]);
+	    ((*mtx)->row_heaps)[row_idx] = NULL;
+	}
     }
-    free((*mtx)->row_labels); (*mtx)->row_labels = NULL;
+    free((*mtx)->row_heaps);
+    (*mtx)->row_heaps = NULL;
+    free((*mtx)->row_labels); 
+    (*mtx)->row_labels = NULL;
+    
     for (col_idx = 0; col_idx < (*mtx)->col_count; ++col_idx) {
-        free((*mtx)->col_labels[col_idx]); (*mtx)->col_labels[col_idx] = NULL;
+        free((*mtx)->col_labels[col_idx]); 
+	(*mtx)->col_labels[col_idx] = NULL;
+	if ((*mtx)->col_heaps) {
+	    delete_heap(&((*mtx)->col_heaps)[col_idx]);
+	    ((*mtx)->col_heaps)[col_idx] = NULL;
+	}
     }
-    free((*mtx)->col_labels); (*mtx)->col_labels = NULL;
-    free((*mtx)->data_values); (*mtx)->data_values = NULL;
-    free((*mtx)->missing_values); (*mtx)->missing_values = NULL;
+    free((*mtx)->col_heaps);
+    (*mtx)->col_heaps = NULL;
+    free((*mtx)->col_labels); 
+    (*mtx)->col_labels = NULL;
+    
+    free((*mtx)->data_values); 
+    (*mtx)->data_values = NULL;
+
+    free((*mtx)->missing_values); 
+    (*mtx)->missing_values = NULL;
+
     delete_stats_ptr(mtx_ptr);
-    free((*mtx)->color_values); (*mtx)->color_values = NULL;
+
+    free((*mtx)->color_values); 
+    (*mtx)->color_values = NULL;
+
     free(*mtx); *mtx = NULL;
 
 #ifdef DEBUG
@@ -723,4 +818,3 @@ char * strtok_single(char *str, const char *delims)
 
     return ret;
 }
-

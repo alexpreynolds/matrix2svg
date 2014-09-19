@@ -16,6 +16,7 @@ libm2s_adir = $(includedir)/m2s
 # the list of header files that belong to the library (to be installed later)
 libm2s_a_HEADERS =	\
 			../../include/matrix2svg_data.h \
+			../../include/matrix2svg_heap.h \
 			../../include/matrix2svg_print.h \
 			../../include/matrix2svg_types.h 
 
@@ -23,6 +24,7 @@ libm2s_a_HEADERS =	\
 libm2s_a_SOURCES =	\
 			$(libm2s_a_HEADERS) \
 			matrix2svg_data.c \
+			matrix2svg_heap.c \
 			matrix2svg_print.c \
 			matrix2svg_types.c  
 

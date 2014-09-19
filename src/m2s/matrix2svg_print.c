@@ -1,4 +1,5 @@
 #include "matrix2svg_print.h"
+#include "matrix2svg_heap.h"
 #include "matrix2svg.h"
 
 void print_ops()
